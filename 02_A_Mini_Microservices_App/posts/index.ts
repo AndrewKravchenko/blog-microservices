@@ -1,5 +1,4 @@
 import express, { Request, Response } from 'express';
-import bodyParser from 'body-parser';
 import { randomBytes } from 'crypto';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -7,7 +6,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const app = express();
-app.use(bodyParser.json());
+app.use(express.json());
 app.use(cors());
 
 type Post = {
