@@ -20,7 +20,7 @@ const posts: Record<string, Post> = {};
 const generatePostId = (): string => randomBytes(4).toString('hex');
 
 app.get(POSTS_ROUTE, (req: Request, res: Response) => {
-  res.send(posts);
+  res.send(Object.values(posts));
 });
 
 app.post(POSTS_ROUTE, async (req: Request, res: Response) => {
