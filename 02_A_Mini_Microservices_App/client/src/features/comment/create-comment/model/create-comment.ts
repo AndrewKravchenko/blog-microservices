@@ -1,13 +1,12 @@
 import { toast } from 'react-toastify';
 
-import { postsApi } from '@/shared/api/posts-api.ts';
+import { commentsApi } from '@/shared/api/comments-api.ts';
 
-export const createPost = async (title: string) => {
+export const createComment = async (postId: string, content: string): Promise<void> => {
   try {
-    const response = await postsApi.post('posts', {
-      json: { title },
+    await commentsApi.post(`posts/${postId}/comments`, {
+      json: { content },
     });
-    return response.json();
   } catch (error) {
     if (error instanceof Error) {
       toast.error(`Error creating post: ${error.message}`);

@@ -1,5 +1,5 @@
-import { PostList } from '@/entities/post/post-list';
 import { CreatePostForm } from '@/features/post/create-post-form';
+import { PostList } from '@/widgets/post/post-list';
 
 export const PostPage = () => {
   return (
