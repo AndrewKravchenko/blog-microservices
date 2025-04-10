@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import { randomBytes } from 'crypto';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import axios from 'axios';
 
 dotenv.config();
 
@@ -15,6 +16,7 @@ type Comment = {
 }
 
 const COMMENTS_ROUTE = '/posts/:id/comments';
+const EVENTS_ROUTE = '/events';
 const commentsByPostId: Record<string, Comment[]> = {};
 
 const generateCommentId = (): string => randomBytes(4).toString('hex');
@@ -46,7 +48,22 @@ app.post(COMMENTS_ROUTE, async (req: Request, res: Response) => {
   comments.push(newComment);
   commentsByPostId[postId] = comments;
 
+  await axios.post(`${process.env.EVENTS_SERVICE_URL}/events`, {
+    type: 'CommentCreated',
+    data: {
+      id: commentId,
+      content,
+      postId,
+    },
+  });
+
   res.status(201).send(comments);
+});
+
+app.post(EVENTS_ROUTE, (req, res) => {
+  console.log('Event Received', req.body.type);
+
+  res.send({});
 });
 
 const PORT = process.env.PORT || 4001;

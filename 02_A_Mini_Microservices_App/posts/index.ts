@@ -5,17 +5,18 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const app = express();
-app.use(express.json());
-app.use(cors());
-
 type Post = {
   id: string;
   title: string;
 }
 
 const POSTS_ROUTE = '/posts';
+const EVENTS_ROUTE = '/events';
 const posts: Record<string, Post> = {};
+
+const app = express();
+app.use(express.json());
+app.use(cors());
 
 const generatePostId = (): string => randomBytes(4).toString('hex');
 
@@ -35,6 +36,12 @@ app.post(POSTS_ROUTE, async (req: Request, res: Response) => {
   posts[id] = newPost;
 
   res.status(201).send(newPost);
+});
+
+app.post(EVENTS_ROUTE, (req, res) => {
+  console.log('Event Received', req.body.type);
+
+  res.send({});
 });
 
 const PORT = process.env.PORT || 4000;

@@ -2,7 +2,7 @@
   "name": "posts",
   "version": "1.0.0",
   "description": "",
-  "main": "index.ts",
+  "main": "index.js",
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon -r tsconfig-paths/register --exec ts-node ./index.ts --files",
     "start": "cross-env NODE_ENV=production node ./dist/index.js",
