@@ -3,8 +3,13 @@ import { randomBytes } from 'crypto';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import axios from 'axios';
+import path from "node:path";
 
-dotenv.config();
+const envPath = `.env.${process.env.NODE_ENV || 'development'}`;
+
+dotenv.config({
+  path: path.resolve(process.cwd(), envPath)
+});
 
 const app = express();
 app.use(express.json());
@@ -51,7 +56,7 @@ app.post(COMMENTS_ROUTE, async (req: Request, res: Response) => {
   comments.push(newComment);
   commentsByPostId[postId] = comments;
 
-  await axios.post(`${process.env.EVENTS_SERVICE_URL}/events`, {
+  await axios.post(`${process.env.EVENT_BUS_SERVICE_URL}/events`, {
     type: 'CommentCreated',
     data: {
       id: commentId,
@@ -83,7 +88,7 @@ app.post(EVENTS_ROUTE, async (req, res) => {
     }
     comment.status = status;
 
-    await axios.post(`${process.env.EVENTS_SERVICE_URL}/events`, {
+    await axios.post(`${process.env.EVENT_BUS_SERVICE_URL}/events`, {
       type: 'CommentUpdated',
       data: {
         id,

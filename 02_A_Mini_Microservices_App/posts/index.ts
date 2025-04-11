@@ -2,8 +2,14 @@ import express, { Request, Response } from 'express';
 import { randomBytes } from 'crypto';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import axios from 'axios';
+import path from "node:path";
 
-dotenv.config();
+const envPath = `.env.${process.env.NODE_ENV || 'development'}`;
+
+dotenv.config({
+  path: path.resolve(process.cwd(), envPath)
+});
 
 type Post = {
   id: string;
@@ -35,6 +41,11 @@ app.post(POSTS_ROUTE, async (req: Request, res: Response) => {
   const newPost: Post = { id, title };
   posts[id] = newPost;
 
+  await axios.post(`${process.env.EVENT_BUS_SERVICE_URL}${EVENTS_ROUTE}`, {
+    type: 'PostCreated',
+    data: newPost,
+  });
+
   res.status(201).send(newPost);
 });
 
@@ -46,5 +57,6 @@ app.post(EVENTS_ROUTE, (req, res) => {
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
+  console.log('v3');
   console.log(`Listening on port ${PORT}`);
 });

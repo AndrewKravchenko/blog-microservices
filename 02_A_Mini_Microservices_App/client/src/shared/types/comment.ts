@@ -1,4 +1,5 @@
-type CommentStatus = 'approved' | 'rejected' | 'pending';
+export type CommentStatus = 'approved' | 'rejected' | 'pending';
+
 export type Comment = {
   id: string;
   content: string;

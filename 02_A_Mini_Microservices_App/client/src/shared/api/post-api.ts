@@ -1,7 +1,7 @@
 import ky from 'ky';
 
 export const postApi = ky.create({
-  prefixUrl: 'http://localhost:4000/',
+  prefixUrl: import.meta.env.VITE_API_POSTS_SERVICE_URL,
   headers: {
     'Content-Type': 'application/json',
   },

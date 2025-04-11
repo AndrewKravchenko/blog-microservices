@@ -1,7 +1,7 @@
 import ky from 'ky';
 
 export const queryApi = ky.create({
-  prefixUrl: 'http://localhost:4002/',
+  prefixUrl: import.meta.env.VITE_API_QUERY_SERVICE_URL,
   headers: {
     'Content-Type': 'application/json',
   },

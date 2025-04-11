@@ -1,5 +1,5 @@
-import type { Comment } from '@/entities/comment/comment-list/model/types.ts';
 import { notReachable } from '@/shared/lib/assertions';
+import type { Comment } from '@/shared/types/comment';
 
 export const CommentList = ({ comments }: { comments: Comment[] }) => {
   const getCommentContent = (comment: Comment): string => {

@@ -1,10 +1,17 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import axios from 'axios';
+import path from "node:path";
 
-dotenv.config();
+const envPath = `.env.${process.env.NODE_ENV || 'development'}`;
 
-type CommentStatus = "approved" | "rejected" | "pending";
+dotenv.config({
+  path: path.resolve(process.cwd(), envPath)
+});
+
+type EventType = 'PostCreated' | 'CommentCreated' | 'CommentUpdated';
+type CommentStatus = 'pending' | 'approved' | 'rejected';
 type Comment = {
   id: string;
   content: string
@@ -25,13 +32,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-app.get(POSTS_ROUTE, (req: Request, res: Response) => {
-  res.send(posts)
-});
-
-app.get(EVENTS_ROUTE, (req: Request, res: Response) => {
-  const { type, data } = req.body;
-
+const handleEvent = (type: EventType, data: any) => {
   if (type === 'PostCreated') {
     const { id, title } = data;
 
@@ -51,20 +52,32 @@ app.get(EVENTS_ROUTE, (req: Request, res: Response) => {
       return comment.id === id;
     });
 
-    if (!comment) {
-      res.status(404).send({ error: 'Comment not found' });
-      return
+    if (comment) {
+      comment.status = status;
+      comment.content = content;
     }
-    comment.status = status;
-    comment.content = content;
   }
+};
 
-  console.log(posts);
+app.get(POSTS_ROUTE, (req: Request, res: Response) => {
+  res.send(posts)
+});
 
+app.get(EVENTS_ROUTE, (req: Request, res: Response) => {
+  const { type, data } = req.body;
+
+  handleEvent(type, data);
   res.send({});
 });
 
-const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => {
+const PORT = process.env.PORT || 4002;
+app.listen(PORT, async () => {
   console.log(`Listening on port ${PORT}`);
+
+  const res = await axios.get(`${process.env.EVENT_BUS_SERVICE_URL}${EVENTS_ROUTE}`);
+
+  for (let event of res.data) {
+    console.log('Processing event:', event.type);
+    handleEvent(event.type, event.data);
+  }
 });

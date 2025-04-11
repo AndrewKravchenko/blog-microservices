@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { CommentList } from '@/entities/comment/comment-list';
+import { CommentList } from '@/entities/comment';
 import { getPosts, type Post } from '@/entities/post/model';
 import { CreateCommentForm } from '@/features/comment/create-comment';
 
@@ -18,7 +18,7 @@ export const PostList = () => {
           <div className="card" style={{ width: '30%', marginBottom: '20px' }} key={post.id}>
             <div className="card-body">
               <h3>{post.title}</h3>
-              <CommentList postId={post.id} />
+              <CommentList comments={post.comments} />
               <CreateCommentForm postId={post.id} />
             </div>
           </div>

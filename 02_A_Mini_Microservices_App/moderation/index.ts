@@ -1,5 +1,13 @@
 import express, { Request, Response } from 'express';
+import dotenv from 'dotenv';
 import axios from 'axios';
+import path from "node:path";
+
+const envPath = `.env.${process.env.NODE_ENV || 'development'}`;
+
+dotenv.config({
+  path: path.resolve(process.cwd(), envPath)
+});
 
 const EVENTS_ROUTE = '/events';
 
