@@ -10,9 +10,11 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+type CommentStatus = "approved" | "rejected" | "pending";
 type Comment = {
   id: string;
   content: string;
+  status: CommentStatus;
 }
 
 const COMMENTS_ROUTE = '/posts/:id/comments';
@@ -43,6 +45,7 @@ app.post(COMMENTS_ROUTE, async (req: Request, res: Response) => {
   const newComment: Comment = {
     id: commentId,
     content,
+    status: 'pending',
   };
 
   comments.push(newComment);
@@ -54,14 +57,42 @@ app.post(COMMENTS_ROUTE, async (req: Request, res: Response) => {
       id: commentId,
       content,
       postId,
+      status: 'pending',
     },
   });
 
   res.status(201).send(comments);
 });
 
-app.post(EVENTS_ROUTE, (req, res) => {
+app.post(EVENTS_ROUTE, async (req, res) => {
   console.log('Event Received', req.body.type);
+
+  const { type, data } = req.body;
+
+  if (type === 'CommentModerated') {
+    const { postId, id, status, content } = data;
+    const comments = commentsByPostId[postId];
+
+    const comment = comments.find((comment) => {
+      return comment.id === id;
+    });
+
+    if (!comment) {
+      res.status(404).send({ error: 'Comment not found' });
+      return
+    }
+    comment.status = status;
+
+    await axios.post(`${process.env.EVENTS_SERVICE_URL}/events`, {
+      type: 'CommentUpdated',
+      data: {
+        id,
+        status,
+        postId,
+        content,
+      },
+    });
+  }
 
   res.send({});
 });

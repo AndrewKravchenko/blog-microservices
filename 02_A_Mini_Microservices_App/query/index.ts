@@ -4,9 +4,11 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+type CommentStatus = "approved" | "rejected" | "pending";
 type Comment = {
   id: string;
   content: string
+  status: CommentStatus;
 };
 type Post = {
   id: string;
@@ -35,12 +37,26 @@ app.get(EVENTS_ROUTE, (req: Request, res: Response) => {
 
     posts[id] = { id, title, comments: [] };
   }
-
   if (type === 'CommentCreated') {
-    const { id, content, postId } = data;
+    const { id, content, postId, status } = data;
 
     const post = posts[postId];
-    post.comments.push({ id, content });
+    post.comments.push({ id, content, status });
+  }
+  if (type === 'CommentUpdated') {
+    const { id, content, postId, status } = data;
+
+    const post = posts[postId];
+    const comment = post.comments.find((comment) => {
+      return comment.id === id;
+    });
+
+    if (!comment) {
+      res.status(404).send({ error: 'Comment not found' });
+      return
+    }
+    comment.status = status;
+    comment.content = content;
   }
 
   console.log(posts);
