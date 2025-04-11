@@ -1,10 +1,10 @@
 import { toast } from 'react-toastify';
 
-import { commentsApi } from '@/shared/api/comments-api.ts';
+import { commentApi } from '@/shared/api/comment-api.ts';
 
 export const createComment = async (postId: string, content: string): Promise<void> => {
   try {
-    await commentsApi.post(`posts/${postId}/comments`, {
+    await commentApi.post(`posts/${postId}/comments`, {
       json: { content },
     });
   } catch (error) {

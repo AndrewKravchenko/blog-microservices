@@ -1,10 +1,10 @@
 import { toast } from 'react-toastify';
 
-import { postsApi } from '@/shared/api/posts-api.ts';
+import { postApi } from '@/shared/api/post-api.ts';
 
 export const createPost = async (title: string) => {
   try {
-    const response = await postsApi.post('posts', {
+    const response = await postApi.post('posts', {
       json: { title },
     });
     return response.json();
