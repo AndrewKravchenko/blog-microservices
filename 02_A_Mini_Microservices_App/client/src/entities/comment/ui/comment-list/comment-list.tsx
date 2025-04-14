@@ -17,7 +17,7 @@ export const CommentList = ({ comments }: { comments: Comment[] }) => {
 
   return (
     <ul>
-      {comments.map((comment) => {
+      {comments?.map((comment) => {
         return <li key={comment.id}>{getCommentContent(comment)}</li>;
       })}
     </ul>

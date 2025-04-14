@@ -22,6 +22,7 @@ const posts: Record<string, Post> = {};
 
 const app = express();
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
 const generatePostId = (): string => randomBytes(4).toString('hex');
@@ -30,8 +31,10 @@ app.get(POSTS_ROUTE, (req: Request, res: Response) => {
   res.send(Object.values(posts));
 });
 
-app.post(POSTS_ROUTE, async (req: Request, res: Response) => {
+app.post(`${POSTS_ROUTE}/create`, async (req: Request, res: Response) => {
   const id = generatePostId();
+  console.log('req!!!', req);
+  console.log('req.body', req.body);
   const { title } = req.body;
 
   if (!title) {
@@ -57,6 +60,6 @@ app.post(EVENTS_ROUTE, (req, res) => {
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
-  console.log('v3');
+  console.log('v555');
   console.log(`Listening on port ${PORT}`);
 });
