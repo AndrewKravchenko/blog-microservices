@@ -1,0 +1,17 @@
+apiVersion: skaffold/v3
+kind: Config
+manifests:
+  rawYaml:
+    - ./infrastructure/k8s/*
+build:
+  local:
+    push: false
+  artifacts:
+    - image: 1994a/auth
+      context: auth
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: "src/**/*.ts"
+            dest: .
